@@ -1,0 +1,229 @@
+<div *ngIf="showAlertSuccess">
+  <app-alerts
+    [showAlertSuccess]="showAlertSuccess"
+    [messageAlert]="messageAlert"
+  ></app-alerts>
+</div>
+<div *ngIf="showAlertError">
+  <app-alerts
+    [showAlertError]="showAlertError"
+    [messageAlert]="messageAlert"
+  ></app-alerts>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <h1>Ventas</h1>
+      <div class="separator mb-5"></div>
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="mb-4">Gestión de Vetas</h5>
+              <form
+                autocomplete="off"
+                [formGroup]="salesForm"
+                (submit)="submit()"
+              >
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Cliente</label>
+                  <ng-select formControlName="clientId">
+                    <ng-option
+                      *ngFor="let client of clients"
+                      [value]="client.id"
+                      >{{ client.name }}</ng-option
+                    >
+                  </ng-select>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Producto</label>
+                  <ng-select formControlName="productId">
+                    <ng-option
+                      *ngFor="let product of products"
+                      [value]="product.id"
+                      >{{ product.title }}</ng-option
+                    >
+                  </ng-select>
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Lote</label>
+                  <ng-select formControlName="lotId">
+                    <ng-option *ngFor="let lot of lots" [value]="lot.id"
+                      >{{ lot.code }} - {{ lot.createAt | date }} -
+                      {{ lot.typeLot }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Cantidad</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Ingrese el precio del producto"
+                    formControlName="quantity"
+                    (blur)="calculatePrice()"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Precio Total</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Ingrese el precio del producto"
+                    formControlName="totalPrice"
+                  />
+                </div>
+
+                <button type="submit" class="btn btn-primary mb-0">
+                  Submit
+                </button>
+                &nbsp;
+                <button
+                  type="button"
+                  class="btn btn-danger mb-0"
+                  (click)="deselectSale()"
+                  *ngIf="salesForm.value.id"
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Ventas</h5>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="input-group typeahead-container">
+                    <input
+                      type="text"
+                      class="form-control typeahead"
+                      name="term"
+                      id="query"
+                      placeholder="Start typing something to search..."
+                      data-provide="typeahead"
+                      autocomplete="off"
+                      [(ngModel)]="term"
+                    />
+                    <div class="input-group-append">
+                      <button
+                        type="button"
+                        class="btn btn-primary default"
+                        (click)="getSalesByTerm('client')"
+                      >
+                        <i class="simple-icon-magnifier"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <select
+                    class="form-control select2-single"
+                    data-width="100%"
+                    [(ngModel)]="term2"
+                    name="term2"
+                    (blur)="getSalesByTerm('product')"
+                  >
+                    <option value="todos" selected>Todos</option>
+                    <option
+                      [value]="product.id"
+                      *ngFor="let product of products"
+                    >
+                      {{ product.title }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <br />
+              <table class="table">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Lote</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio Total</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let sale of sales">
+                    <td>{{ sale.client.name }}</td>
+                    <td>{{ sale.product.title }}</td>
+                    <td>{{ sale.lot.code }}</td>
+                    <td>{{ sale.quantity }}</td>
+                    <td>{{ sale.totalPrice }}</td>
+                    <td>{{ sale.createAt | date }}</td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-outline-success mb-1"
+                        (click)="selectSale(sale)"
+                      >
+                        Seleccionar
+                      </button>
+                      &nbsp;
+                      <button
+                        type="button"
+                        class="btn btn-outline-warning mb-1"
+                        (click)="deleteSale(sale.id)"
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="center" role="group" *ngIf="showPagination">
+                <div class="btn-group mr-2 mb-5">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="back()"
+                  >
+                    <i class="simple-icon-arrow-left"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="next()"
+                  >
+                    <i class="simple-icon-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="center" role="group" *ngIf="!showPagination">
+                <div class="btn-group mr-2 mb-5">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="backSearch()"
+                  >
+                    <i class="simple-icon-arrow-left"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="nextSearch()"
+                  >
+                    <i class="simple-icon-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+<div *ngIf="showAlertSuccess">
+  <app-alerts
+    [showAlertSuccess]="showAlertSuccess"
+    [messageAlert]="messageAlert"
+  ></app-alerts>
+</div>
+<div *ngIf="showAlertError">
+  <app-alerts
+    [showAlertError]="showAlertError"
+    [messageAlert]="messageAlert"
+  ></app-alerts>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <h1>Productos</h1>
+      <div class="separator mb-5"></div>
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="mb-4">Gestión de productos</h5>
+              <form
+                (submit)="submitForm()"
+                autocomplete="off"
+                [formGroup]="productForm"
+              >
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Producto</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Ingrese el nombre del producto"
+                    formControlName="title"
+                  />
+                </div>
+                <div class="row">
+                  <div class="col text-danger">
+                    <p *ngIf="invalidFields('title')">
+                      El nombre del producto es obligatorio
+                    </p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Codigo</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Ingrese el codigo del producto"
+                    formControlName="code"
+                  />
+                </div>
+                <div class="row">
+                  <div class="col text-danger">
+                    <p *ngIf="invalidFields('code')">
+                      El codigo del producto es obligatorio
+                    </p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Descripción</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Ingrese la descripción del producto"
+                    formControlName="description"
+                  />
+                </div>
+                <div class="row">
+                  <div class="col text-danger">
+                    <p *ngIf="invalidFields('description')">
+                      La descripción del producto es obligatoria
+                    </p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Precio</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Ingrese el precio del producto"
+                    formControlName="price"
+                  />
+                </div>
+                <div class="row">
+                  <div class="col text-danger">
+                    <p *ngIf="invalidFields('price')">
+                      El precio del producto es obligatorio
+                    </p>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary mb-0">
+                  Submit
+                </button>
+                &nbsp;
+                <button
+                  class="btn btn-danger mb-0"
+                  *ngIf="productForm.value.id"
+                  (click)="deselectProduct()"
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Productos</h5>
+
+              <table class="table">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let product of products">
+                    <td>{{ product.code }}</td>
+                    <td>{{ product.title }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-outline-success mb-1"
+                        (click)="selectProduct(product)"
+                      >
+                        Seleccionar
+                      </button>
+                      &nbsp;
+                      <button
+                        type="button"
+                        class="btn btn-outline-warning mb-1"
+                        (click)="deleteProduct(product.id)"
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
